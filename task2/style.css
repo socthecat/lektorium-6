@@ -1,0 +1,30 @@
+#wrapper {
+    width: 840px;
+    height: 630px;
+    background-image: url('img/image.jpg');
+    margin: 0 auto;
+    position: relative;
+}
+.tag-wrapper {
+    position: absolute;
+}
+.tag-wrapper * {
+    border-radius: 5px;
+    background-color: rgba(34,34,34,.75);
+    opacity: .9;
+    border: 1px solid #000;
+    cursor: pointer;
+    color: white;
+}
+.tagging-title {
+    padding: 5px 15px;
+}
+.delete {
+    padding: 5px;
+    /*display: none;*/
+}
+/*
+.delete.show {
+    display: inline;
+}
+*/
