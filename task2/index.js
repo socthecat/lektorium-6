@@ -13,23 +13,59 @@ const newElement = content => {
   document.getElementById('wrapper').append(div)
 }
 
-var img = document.querySelector('.tag-wrapper')
-img.ondragstart = () => false
 const rect = document.getElementById('wrapper').getBoundingClientRect()
 
-img.onmousedown = e => {
-  img.style.position = 'absolute'
-  const saveX = e.offsetX
-  const saveY = e.offsetY
-
-  document.onmousemove = e => {
-    img.style.position = 'absolute'
-    img.style.top = e.pageY - rect.y - saveY + 'px'
-    img.style.left = e.pageX - rect.x - saveX + 'px'
-    console.log(e)
+const movement = img => {
+  img.onclick = e => {
+    try {
+      if (e.target.nextSibling.classList.contains('show')) {
+        e.target.nextSibling.classList.remove('show')
+        img.onmousedown = () => false
+      } else if (!e.target.nextSibling.classList.contains('show')) {
+        e.target.nextSibling.classList.add('show')
+        e.target.style.cursor = 'grab'
+        img.ondragstart = () => false
+        img.onmousedown = e => {
+          img.style.position = 'absolute'
+          const saveX = e.offsetX
+          const saveY = e.offsetY
+          document.onmousemove = e => {
+            img.style.position = 'absolute'
+            if (parseInt(img.style.top) < 0) {
+              img.style.top = 0
+            } else if (parseInt(img.style.top) > 630 - img.offsetHeight) {
+              img.style.top = 630 - img.offsetHeight + 'px'
+            } else {
+              img.style.top = (img.style.top < 0) ? 0 : e.pageY - rect.y - saveY + 'px'
+            }
+            if (parseInt(img.style.left) < 0) {
+              img.style.left = 0
+            } else if (parseInt(img.style.left) > 840 - img.offsetWidth) {
+              img.style.left = 840 - img.offsetWidth + 'px'
+            } else {
+              img.style.left = e.pageX - rect.x - saveX + 'px'
+            }
+          }
+        }
+        img.onmouseup = e => {
+          document.onmousemove = () => false
+          e.target.style.cursor = 'pointer'
+        }
+      }
+    }
+    catch { }
   }
 }
 
-img.onmouseup = e => {
-  document.onmousemove = () => false
-}
+document.querySelectorAll('.tag-wrapper').forEach(node => {
+  movement(node)
+})
+const observer = new MutationObserver(function (mutations) {
+  if (mutations[0].addedNodes.length) {
+    movement(mutations[0].addedNodes[0])
+  }
+})
+
+const config = { childList: true }
+
+observer.observe(document.getElementById('wrapper'), config)
